@@ -2,18 +2,24 @@ require 'oystercard'
 
 describe Oystercard do
   subject :oystercard  { described_class.new }
-  it "check oystercard balance" do
-    expect(oystercard.balance).to eq 0
-  end
 
-  it "check top up adds to balance" do
-    expect(oystercard.top_up(2)).to eq 2
+  context "balance checks:" do
+    it "check oystercard balance" do
+      expect(oystercard.balance).to eq 0
+    end
 
-  end
+    it "check top up adds to balance" do
+      expect(oystercard.top_up(2)).to eq 2
+    end
 
-  it "check top up amount adds same amount to balance" do
+    it "check top up amount adds same amount to balance" do
       expect{oystercard.top_up(1)}.to change{ oystercard.balance}.by 1
     end
 
-
+    it "check top up is capped" do
+      max_balance = Oystercard::BALANCE_LIMIT
+      amount = max_balance + 1
+      expect{oystercard.top_up(amount)}.to raise_error "Cannot top up by £#{amount} as your balance will exceed £#{max_balance}"
+    end
+  end
 end
