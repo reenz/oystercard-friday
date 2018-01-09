@@ -42,13 +42,22 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
+
     it 'changes oystercard journey status to true' do
+      card.top_up(10)
       expect { card.touch_in } .to change { card.in_journey? } .to true
     end
+
+    it "raises an error if balance is below #{Oystercard::MINIMUM_FARE}" do
+      error = 'Insufficient balance'
+      expect { card.touch_in } .to raise_error error
+    end
+
   end
 
   describe '#touch_out' do
     it 'changes oystercard journey status to false' do
+      card.top_up(10)
       card.touch_in
       expect { card.touch_out } .to change { card.in_journey? } .to false
     end
