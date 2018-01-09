@@ -9,7 +9,6 @@ class Oystercard
     @balance = 0.00
     @entry_station = nil
     @journeys = []
-    @current_journey = { entry_station: nil, exit_station: nil }
   end
 
   def top_up(amount)
@@ -21,15 +20,14 @@ class Oystercard
   def touch_in(station)
     balance_error = 'Insufficient balance'
     raise balance_error if balance_too_low
-    @current_journey[:entry_station] = station
     @entry_station = station
   end
 
   def touch_out(station)
     deduct(MINIMUM_FARE)
+    @exit_station = station
+    push_to_journeys
     @entry_station = nil
-    @current_journey[:exit_station] = station
-    @journeys.push(@current_journey)
   end
 
   def in_journey?
@@ -37,6 +35,10 @@ class Oystercard
   end
 
   private
+
+  def push_to_journeys
+    @journeys << {entry_station: @entry_station, exit_station: @exit_station}
+  end
 
   def deduct(amount)
     @balance -= amount
