@@ -2,10 +2,22 @@ require 'oystercard'
 
 describe Oystercard do
   subject :card  { described_class.new }
-  let(:station) { double :station }
+  let(:station0) { double :station }
+  let(:station1) { double :station }
 
   it "balance should be zero" do
     expect(card.balance).to eq 0
+  end
+
+  it "journeys starts empty" do
+    expect(card.journeys).to eq []
+  end
+
+  it 'journey is complete after touch in and touch out' do
+    card.top_up(10)
+    card.touch_in(station0)
+    card.touch_out(station1)
+    expect(card.journeys).to eq [{ entry_station: station0, exit_station: station1 }]
   end
 
   describe '#top_up' do
@@ -35,7 +47,7 @@ describe Oystercard do
 
     it "raises an error if balance is below #{Oystercard::MINIMUM_FARE}" do
       error = 'Insufficient balance'
-      expect { card.touch_in(station)} .to raise_error error
+      expect { card.touch_in(station0)} .to raise_error error
     end
 
     context 'card ready to use' do
@@ -45,11 +57,11 @@ describe Oystercard do
       end
 
       it 'changes oystercard journey status to true' do
-        expect { card.touch_in(station)} .to change { card.in_journey? } .to true
+        expect { card.touch_in(station0)} .to change { card.in_journey? } .to true
       end
 
       it "returns station after touch in" do
-        expect(card.touch_in(station)).to eq card.entry_station
+        expect(card.touch_in(station0)).to eq card.entry_station
       end
 
     end
@@ -60,20 +72,20 @@ describe Oystercard do
 
     before do
       card.top_up(10)
-      card.touch_in(station)
+      card.touch_in(station0)
     end
 
     it 'changes oystercard journey status to false' do
-      expect { card.touch_out } .to change { card.in_journey? } .to false
+      expect { card.touch_out(station1) } .to change { card.in_journey? } .to false
     end
 
     it "reduces balance by #{Oystercard::MINIMUM_FARE}" do
       charge = -Oystercard::MINIMUM_FARE
-      expect { card.touch_out } .to change { card.balance } .by charge
+      expect { card.touch_out(station1) } .to change { card.balance } .by charge
     end
 
     it "sets entry station to nil on touch out" do
-      expect { card.touch_out } .to change { card.entry_station } .to nil
+      expect { card.touch_out(station1) } .to change { card.entry_station } .to nil
     end
 
   end
