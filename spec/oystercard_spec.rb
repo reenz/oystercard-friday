@@ -3,21 +3,17 @@ require 'oystercard'
 describe Oystercard do
   subject :oystercard  { described_class.new }
 
-  it "check oystercard balance" do
+  it "balance should be zero" do
     expect(oystercard.balance).to eq 0
   end
 
   describe '#top_up' do
 
-    it "check top up adds to balance" do
-      expect(oystercard.top_up(2)).to eq 2
+    it "top up adds to balance" do
+      expect { oystercard.top_up(2) } .to change { oystercard.balance } .by 2
     end
 
-    it "check top up amount adds same amount to balance" do
-      expect { oystercard.top_up(1) } .to change { oystercard.balance } .by 1
-    end
-
-    it "check top up is capped" do
+    it "top up will not exceed balance limit" do
       max_balance = Oystercard::BALANCE_LIMIT
       amount = Oystercard::BALANCE_LIMIT + 1
       error = "£#{amount} top up failed, balance will exceed £#{max_balance}"
@@ -27,15 +23,12 @@ describe Oystercard do
   end
 
   describe '#deduct' do
-
-    it "should deduct specified amount from balance" do
+    before do
       oystercard.top_up(10)
-      expect(oystercard.deduct(3)).to eq 7
     end
 
-    it "should deduct specified amount from balance 2" do
-      oystercard.top_up(10)
-      expect { oystercard.deduct(5) } .to change { oystercard.balance } .by -5
+    it "should deduct amount from balance" do
+      expect { oystercard.deduct(3) } .to change { oystercard.balance } .by -3
     end
 
   end
