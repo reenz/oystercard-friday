@@ -33,28 +33,37 @@ describe Oystercard do
 
   describe '#touch_in' do
 
-    it 'changes oystercard journey status to true' do
-      card.top_up(10)
-      expect { card.touch_in(station)} .to change { card.in_journey? } .to true
-    end
-
     it "raises an error if balance is below #{Oystercard::MINIMUM_FARE}" do
       error = 'Insufficient balance'
       expect { card.touch_in(station)} .to raise_error error
     end
 
-    it "returns station after touch in" do
-      card.top_up(10)
-      expect(card.touch_in(station)).to eq card.entry_station
+    context 'card ready to use' do
+
+      before do
+        card.top_up(10)
+      end
+
+      it 'changes oystercard journey status to true' do
+        expect { card.touch_in(station)} .to change { card.in_journey? } .to true
+      end
+
+      it "returns station after touch in" do
+        expect(card.touch_in(station)).to eq card.entry_station
+      end
+
     end
 
   end
 
   describe '#touch_out' do
 
-    it 'changes oystercard journey status to false' do
+    before do
       card.top_up(10)
       card.touch_in(station)
+    end
+
+    it 'changes oystercard journey status to false' do
       expect { card.touch_out } .to change { card.in_journey? } .to false
     end
 
@@ -64,8 +73,6 @@ describe Oystercard do
     end
 
     it "sets entry station to nil on touch out" do
-      card.top_up(10)
-      card.touch_in(station)
       expect { card.touch_out } .to change { card.entry_station } .to nil
     end
 
