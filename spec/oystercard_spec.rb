@@ -22,17 +22,6 @@ describe Oystercard do
 
   end
 
-  describe '#deduct' do
-    before do
-      card.top_up(10)
-    end
-
-    it "should deduct amount from balance" do
-      expect { card.deduct(3) } .to change { card.balance } .by -3
-    end
-
-  end
-
   describe '#in_journey?' do
 
     it 'returns false before any touches' do
@@ -56,11 +45,18 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
+
     it 'changes oystercard journey status to false' do
       card.top_up(10)
       card.touch_in
       expect { card.touch_out } .to change { card.in_journey? } .to false
     end
+
+    it "reduces balance by #{Oystercard::MINIMUM_FARE}" do
+      charge = -Oystercard::MINIMUM_FARE
+      expect { card.touch_out } .to change { card.balance } .by charge
+    end
+
   end
 
 end
