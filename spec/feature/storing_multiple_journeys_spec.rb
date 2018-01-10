@@ -1,4 +1,5 @@
 require 'oystercard'
+require 'journey'
 
 describe Oystercard do
   subject :card  { described_class.new }
@@ -13,26 +14,35 @@ describe Oystercard do
       expect(card.journeys).to eq []
     end
 
-    context 'taking the journeys' do
+    context 'taking the first journey' do
       before do
         card.top_up(10)
         card.touch_in(station0)
         card.touch_out(station1)
       end
 
-      it 'first journey is stored' do
-        journey = [{ entry_station: station0, exit_station: station1 }]
-        expect(card.journeys).to eq journey
+      it 'first journey entry station is stored' do
+        expect(card.journeys[0].entry_station).to eq station0
       end
 
-      it 'second journey is stored after first' do
-        card.touch_in(station2)
-        card.touch_out(station3)
-        journey = [
-          { entry_station: station0, exit_station: station1 },
-          { entry_station: station2, exit_station: station3 }
-        ]
-        expect(card.journeys).to eq journey
+      it 'first journey exit station is stored' do
+        expect(card.journeys[0].exit_station).to eq station1
+      end
+
+      context 'taking the second journey' do
+        before do
+          card.touch_in(station2)
+          card.touch_out(station3)
+        end
+
+        it 'second journey entry station is stored' do
+          expect(card.journeys[1].entry_station).to eq station2
+        end
+
+        it 'second journey exit station is stored' do
+          expect(card.journeys[1].exit_station).to eq station3
+        end
+
       end
 
     end
