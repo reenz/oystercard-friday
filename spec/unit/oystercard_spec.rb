@@ -9,17 +9,6 @@ describe Oystercard do
     expect(card.balance).to eq 0
   end
 
-  it "journeys starts empty" do
-    expect(card.journeys).to eq []
-  end
-
-  it 'journey is complete after touch in and touch out' do
-    card.top_up(10)
-    card.touch_in(station0)
-    card.touch_out(station1)
-    expect(card.journeys).to eq [{ entry_station: station0, exit_station: station1 }]
-  end
-
   describe '#top_up' do
 
     it "top up adds to balance" do
