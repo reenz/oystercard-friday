@@ -17,12 +17,16 @@ class Journey
   end
 
   def fare
-    return PENALTY_FARE if @exit_station == nil || @entry_station == nil
+    return PENALTY_FARE if incomplete?
     MINIMUM_FARE
   end
 
   def in_journey?
-    !!@entry_station and ! @exit_station
+    (!@entry_station.nil? and @exit_station.nil?) ? true : false
+  end
+
+  def incomplete?
+    @exit_station.nil? || @entry_station.nil?
   end
 
 end
