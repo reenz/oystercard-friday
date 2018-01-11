@@ -1,10 +1,12 @@
 require 'oystercard'
 
 describe Oystercard do
-  subject :card  { described_class.new }
+  let(:journey) { double :journey, touch_in: :station, touch_out: :station, fare: 1 }
+  let(:journey_class) { double :journey_class, new: journey, MINIMUM_FARE: 1}
+  subject :card  { described_class.new(journey_class) }
   let(:station0) { double :station }
   let(:station1) { double :station }
-
+  let(:fare) {double :MINIMUM_FARE}
   it "balance should be zero" do
     expect(card.balance).to eq 0
   end

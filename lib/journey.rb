@@ -1,5 +1,6 @@
 class Journey
   attr_reader :entry_station, :exit_station
+
   MINIMUM_FARE = 1.00
   PENALTY_FARE = 6.00
 
