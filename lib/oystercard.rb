@@ -40,7 +40,7 @@ class Oystercard
   end
 
   def balance_too_low
-    @balance < @journey_class::MINIMUM_FARE
+    @balance < Journey::MINIMUM_FARE
   end
 
   def maximum_exceeded?(amount)

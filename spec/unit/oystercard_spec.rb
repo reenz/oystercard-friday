@@ -6,7 +6,13 @@ describe Oystercard do
   subject :card  { described_class.new(journey_class) }
   let(:station0) { double :station }
   let(:station1) { double :station }
-  let(:fare) {double :MINIMUM_FARE}
+
+    # let(:journey) { double (:journey, stubs={:touch_in => station, :touch_out =>station, :fare =>1 })}
+    # let(:journey_class) { class_double "Journey", stubs = {:new => journey, :MINIMUM_FARE => 1})}
+    # subject :card  { described_class.new(journey_class) }
+    # let(:station0) { double :station }
+    # let(:station1) { double :station }
+
   it "balance should be zero" do
     expect(card.balance).to eq 0
   end
@@ -37,20 +43,9 @@ describe Oystercard do
   describe '#touch_in' do
 
     it "raises an error if balance is below 1" do
+      #allow(journey).to receive(:new).and_return(journey)
       error = 'Insufficient balance'
       expect { card.touch_in(station0)} .to raise_error error
-    end
-
-    context 'card ready to use' do
-
-      before do
-        card.top_up(10)
-      end
-
-      it 'changes oystercard journey status to true' do
-        expect { card.touch_in(station0)} .to change { card.in_journey? } .to true
-      end
-
     end
 
   end
@@ -62,17 +57,9 @@ describe Oystercard do
       card.touch_in(station0)
     end
 
-    it 'changes oystercard journey status to false' do
-      expect { card.touch_out(station1) } .to change { card.in_journey? } .to false
-    end
-
     it "reduces balance by 1" do
       charge = -1
       expect { card.touch_out(station1) } .to change { card.balance } .by charge
-    end
-
-    it "sets entry station to nil on touch out" do
-      expect { card.touch_out(station1) } .to change { card.in_journey? } .to be false
     end
 
   end

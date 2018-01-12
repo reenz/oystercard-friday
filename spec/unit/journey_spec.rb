@@ -22,7 +22,7 @@ describe Journey do
   end
 
   describe '#touch_out' do
-    it 'sets entry station when given station as an argument' do
+    it 'sets exit station when given station as an argument' do
       journey.touch_out(station1)
       expect(journey.exit_station).to eq station1
     end
