@@ -7,6 +7,7 @@ describe Journey do
 
   it 'is created with no stations when created with no arguments' do
     expect(journey.entry_station).to eq nil
+    expect(journey.exit_station).to eq nil
   end
 
   it 'is created with an entry station when given an argument' do
@@ -48,37 +49,21 @@ describe Journey do
   end
 
   describe '#in_journey?' do
-    it 'returns false before touch in' do
-      expect(journey.in_journey?).to eq false
-    end
 
-    it 'returns true after touch in' do
+    it 'returns true if only given an entry station' do
       journey.touch_in(station0)
       expect(journey.in_journey?).to eq true
     end
 
-    it 'returns false after touch out' do
+    it 'returns true if only given an exit station' do
+      journey.touch_out(station1)
+      expect(journey.in_journey?).to eq true
+    end
+
+    it 'returns false when given an entry and exit station' do
       journey.touch_in(station0)
       journey.touch_out(station1)
       expect(journey.in_journey?).to eq false
-    end
-  end
-
-  describe '#incomplete?' do
-    it 'returns true for incomplete when no touch in' do
-      journey.touch_in(station1)
-      expect(journey.incomplete?).to eq true
-    end
-
-    it 'returns true for incomplete when no touch out' do
-      journey.touch_out(station1)
-      expect(journey.incomplete?).to eq true
-    end
-
-    it 'returns false for incomplete after touch in and touch out' do
-      journey.touch_in(station0)
-      journey.touch_out(station1)
-      expect(journey.incomplete?).to eq false
     end
   end
 end

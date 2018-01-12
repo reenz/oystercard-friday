@@ -5,8 +5,9 @@ class Journey
   PENALTY_FARE = 6.00
 
   def initialize(station = nil)
-    touch_in(station)
+    @entry_station = station
     @exit_station = nil
+    @fare = MINIMUM_FARE
   end
 
   def touch_in(station)
@@ -18,16 +19,11 @@ class Journey
   end
 
   def fare
-    return PENALTY_FARE if incomplete?
-    MINIMUM_FARE
+    in_journey? ? PENALTY_FARE : MINIMUM_FARE
   end
 
   def in_journey?
-    (!@entry_station.nil? and @exit_station.nil?) ? true : false
-  end
-
-  def incomplete?
-    @exit_station.nil? || @entry_station.nil?
+    @entry_station.nil? || @exit_station.nil?
   end
 
 end
