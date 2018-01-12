@@ -21,22 +21,16 @@ class Oystercard
 
   def touch_in(station)
     raise 'Insufficient balance' if balance_too_low
+    complete if @current_journey
     @current_journey = @journey_class.new(station)
-    @journeys << @current_journey
-    deduct(@current_journey.fare) if @current_journey
   end
 
   def touch_out(station)
     @current_journey = @journey_class.new unless @current_journey
     @current_journey.finish(station)
-    deduct(@current_journey.fare)
+    complete
   end
-
-  def in_journey?
-    return false if @current_journey == nil
-    @current_journey.in_journey?
-  end
-
+  
   private
 
   def deduct(amount)
@@ -49,6 +43,12 @@ class Oystercard
 
   def maximum_exceeded?(amount)
     @balance + amount > BALANCE_LIMIT
+  end
+
+  def complete
+    @journeys << @current_journey
+    deduct(@current_journey.fare)
+    @current_journey = nil
   end
 
 end
