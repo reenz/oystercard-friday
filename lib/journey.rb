@@ -10,16 +10,16 @@ class Journey
     @fare = MINIMUM_FARE
   end
 
-  def touch_in(station)
+  def start(station)
     @entry_station = station
   end
 
-  def touch_out(station)
+  def finish(station)
     @exit_station = station
   end
 
   def fare
-    in_journey? ? PENALTY_FARE : MINIMUM_FARE
+    @fare = in_journey? ? PENALTY_FARE : MINIMUM_FARE
   end
 
   def in_journey?

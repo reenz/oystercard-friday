@@ -15,34 +15,34 @@ describe Journey do
     expect(journey.entry_station).to eq station0
   end
 
-  describe '#touch_in' do
+  describe '#start' do
     it 'sets entry station when given station as an argument' do
-      journey.touch_in(station0)
+      journey.start(station0)
       expect(journey.entry_station).to eq station0
     end
   end
 
-  describe '#touch_out' do
+  describe '#finish' do
     it 'sets exit station when given station as an argument' do
-      journey.touch_out(station1)
+      journey.finish(station1)
       expect(journey.exit_station).to eq station1
     end
   end
 
   describe '#fare' do
     it "calculates minimum fare of #{Journey::MINIMUM_FARE}" do
-      journey.touch_in(station0)
-      journey.touch_out(station0)
+      journey.start(station0)
+      journey.finish(station0)
       expect(journey.fare).to eq Journey::MINIMUM_FARE
     end
 
     it "returns penalty fare of #{Journey::PENALTY_FARE} when only touch out" do
-      journey.touch_out(station0)
+      journey.finish(station0)
       expect(journey.fare).to eq Journey::PENALTY_FARE
     end
 
     it "returns penalty fare of #{Journey::PENALTY_FARE} when only touch in" do
-      journey.touch_in(station0)
+      journey.start(station0)
       expect(journey.fare).to eq Journey::PENALTY_FARE
     end
 
@@ -51,18 +51,18 @@ describe Journey do
   describe '#in_journey?' do
 
     it 'returns true if only given an entry station' do
-      journey.touch_in(station0)
+      journey.start(station0)
       expect(journey.in_journey?).to eq true
     end
 
     it 'returns true if only given an exit station' do
-      journey.touch_out(station1)
+      journey.finish(station1)
       expect(journey.in_journey?).to eq true
     end
 
     it 'returns false when given an entry and exit station' do
-      journey.touch_in(station0)
-      journey.touch_out(station1)
+      journey.start(station0)
+      journey.finish(station1)
       expect(journey.in_journey?).to eq false
     end
   end

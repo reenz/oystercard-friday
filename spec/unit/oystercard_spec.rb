@@ -1,7 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
-  let(:journey) { double :journey, touch_in: :station, touch_out: :station, fare: 1 }
+  let(:journey) { double :journey, start: :station, finish: :station, fare: 1 ,PENALTY_FARE: 6}
   let(:journey_class) { double :journey_class, new: journey, MINIMUM_FARE: 1}
   subject :card  { described_class.new(journey_class) }
   let(:station0) { double :station }
@@ -48,20 +48,32 @@ describe Oystercard do
       expect { card.touch_in(station0)} .to raise_error error
     end
 
+    it "charges PENALTY_FARE for not touching out after touch in" do
+      card.top_up(10)
+      allow(journey).to receive(:fare).and_return 6
+      expect(card.touch_in(station0)).to eq 4
+    end
   end
 
   describe '#touch_out' do
 
-    before do
+    it "reduces balance by 1" do
       card.top_up(10)
       card.touch_in(station0)
-    end
-
-    it "reduces balance by 1" do
       charge = -1
       expect { card.touch_out(station1) } .to change { card.balance } .by charge
     end
 
+    it "charges PENALTY_FARE for not touching in before touch out"do
+      allow(journey).to receive(:fare).and_return 6
+      card.top_up(10)
+      expect(card.touch_out(station1)).to eq 4
+    end
+
+    it "checks if new journey is being created on touch out without first touch in" do
+      expect(journey_class).to receive(:new)
+      card.touch_out(station1)
+    end
   end
 
 end
